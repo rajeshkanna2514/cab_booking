@@ -1,0 +1,163 @@
+class AdminRegister(APIView):
+    def post(self,request):
+        data = request.data
+        if 'otp' in data:
+            return self.verify_otp(data)
+        else:
+            return self.register_admin(data)
+        
+    def verify_otp(self,data):
+        try:
+            email = data['email']
+            otp = data['otp'] 
+
+            admin = User.objects.get(email=email,otp=otp)
+           
+            if timezone.now()>= admin.otp_created + datetime.timedelta(minutes=1):
+                return Response({"msg": "OTP has expired"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            admin.is_verified=True
+            admin.otp = None
+            admin.otp_created = None
+            admin.save()
+
+            return Response({"msg": "OTP verified successfully"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"msg": "Invalid OTP "}, status=status.HTTP_400_BAD_REQUEST)
+    def register_admin(self,data):
+        try:
+            username = data['username']
+            email = data['email']
+            password = data['password']
+            role = data['role']
+            otp = generate_otp()
+
+            if role == 'admin':
+                admin = User.objects.filter(email=email).create(username=username,email=email,password=make_password(password))
+                admin.is_admin=True
+                admin.is_staff=True
+
+                admin.otp = otp
+                admin.otp_created = timezone.now()
+                admin.save()
+
+                send_otp_mail(email,otp)
+                return Response({f"Msg":"Admin Register Successfully and otp send to your Mail{otp}"},status=status.HTTP_200_OK)
+            else:
+                return Response({"Msg":"Only Admin can Register"},status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'Msg':str(e)},status=status.HTTP_400_BAD_REQUEST)
+
+class CustomerRegister(APIView):
+    def post(self,request):
+        data =request.data
+        if 'otp' in data:
+            return self.verify_otp(data)
+        else:
+            return self.register_customer(data)
+    def verify_otp(self,data):
+        try:
+            email = data['email']
+            otp = data['otp']
+            try:
+                customer = User.objects.get(email=email,otp=otp)
+            except User.DoesNotExist:    
+                return Response({"Msg":"Invalid otp"},status=status.HTTP_400_BAD_REQUEST)
+            if timezone.now() > customer.otp_created + datetime.timedelta(minutes=1):
+                return Response({"msg": "OTP has expired"}, status=status.HTTP_400_BAD_REQUEST)
+        
+            customer.is_verified = True
+            customer.otp = None
+            customer.otp_created = None
+            customer.save()
+            return Response({"msg": "OTP verified successfully"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"msg": "Invalid OTP "}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def register_customer(self,data):
+        try:
+            username = data['username']
+            email = data['email']
+            password = data['password']
+            is_verified = False
+            role = data['role']
+
+            if role == 'customer':
+                otp = generate_otp()
+                if User.objects.filter(email=email).exists():
+                    return Response("Email is already exist")
+                customer = User.objects.create(username=username,email=email,password=make_password(password),otp=otp)
+                customer.is_customer=True
+                customer.is_staff=True
+                
+                customer.otp = otp
+                customer.otp_created=timezone.now()
+                customer.save()
+
+                send_otp_mail(email, otp)
+
+                return Response({"Msg":f"Customer Register Successfully and otp send to your mail  {otp}"},status=status.HTTP_200_OK)
+            else:
+                return Response({"Msg":"Only customer can Register"},status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'Msg':str(e)},status=status.HTTP_400_BAD_REQUEST)
+
+class DriverRegister(APIView):
+    def post(self,request):
+        data = request.data
+        if 'otp' in data:
+            return self.verify_otp(data)
+        else:
+            return self.register_driver(data)
+    def verify_otp(self,data) :
+            
+        try:
+            email = data['email']
+            otp = data['otp']
+            driver = User.objects.get(email=email, otp=otp)
+            
+            if timezone.now() > driver.otp_created + datetime.timedelta(minutes=1):
+                return Response({"msg": "OTP has expired"}, status=status.HTTP_400_BAD_REQUEST)
+
+            driver.is_verified = True
+            driver.otp = None
+            driver.otp_created = None
+            driver.save()
+
+            return Response({"msg": "OTP verified successfully"}, status=status.HTTP_200_OK)
+        except:
+            return Response({"Msg": "Invalid OTP"},status=status.HTTP_404_NOT_FOUND)
+        
+    def register_driver(self,data):
+        try:
+            username = data['username']
+            email = data['email']
+            password = data['password']
+            phone_no = data['phone_no']
+            license_no = data['license_no']
+            vehicle = data['vehicle']
+            vehicle_no = data['vehicle_no']
+            role = data['role']
+            otp = generate_otp()
+            
+            if role == 'driver':
+                driver = User.objects.create_user(username=username, email=email, password=password)
+                driver.phone_no = phone_no
+                driver.license_no = license_no
+                driver.vehicle = vehicle
+                driver.vehicle_no = vehicle_no
+                driver.is_driver = True
+                driver.is_staff = True
+                driver.otp = otp
+                driver.otp_created=timezone.now()
+                driver.save()
+                send_otp_mail(email, otp)
+                return Response({"msg": f"Driver registered successfully, OTP sent to email  {otp}."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"msg": "Only drivers can register"}, status=status.HTTP_400_BAD_REQUEST)
+         
+        except Exception as e:
+            return Response({"msg": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+GOOGLE API KEY = AIzaSyAnvVbxGVK3y_L2YuDJNDY05ZSCLYfwJFo            
