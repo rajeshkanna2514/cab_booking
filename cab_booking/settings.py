@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from datetime import timedelta
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +29,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 AUTH_USER_MODEL = 'booking.User'
 
 # Application definition
@@ -42,22 +45,29 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
     'booking',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'cab_booking.urls'
 
 AUTH_USER_MODEL = 'booking.User'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  
+]
 
 TEMPLATES = [
     {
@@ -81,11 +91,16 @@ WSGI_APPLICATION = 'cab_booking.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+      'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'CabBooking',
+        'USER': 'postgres',
+        'PASSWORD': 'post',
+        'HOST' : '127.0.0.1',
+        'PORT' : '5432',
+    },
 }
 
 REST_FRAMEWORK = {
@@ -132,6 +147,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -156,23 +172,23 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'rajeshkanna5533@gmail.com'
-EMAIL_HOST_PASSWORD = 'urxalhqblakvdpmr'
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-#Phonenumber
+# Phonenumber
 
-TWILIO_ACCOUNT_SID = 'AC97345ff250d1e847e77b62e12a3b78ff'
-TWILIO_AUTH_TOKEN = 'a1c5c51d91d901c769331941e150df30'
-TWILIO_PHONE_NUMBER ="+14159682094"
+TWILIO_ACCOUNT_SID = ''
+TWILIO_AUTH_TOKEN = ''
+TWILIO_PHONE_NUMBER ="+"
 
 
 #Google_APi_Key
 
-GOOGLE_MAPS_API_KEY = 'AIzaSyAnvVbxGVK3y_L2YuDJNDY05ZSCLYfwJFo'
+GOOGLE_MAPS_API_KEY = ''
 
 
-STRIPE_SECRET_KEY = 'sk_test_51PciVIRpye8PPv5bINQN5m3j15nHHu4d6JfNaWJK8jyJ7rBZoYKmZbP1wYnzSx9uStp7yi3l9S9wWXsDGQ2bBDPA00XZVOl8Sj'
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51PciVIRpye8PPv5bt2CWlNfHV8OfBiOSGm9qcD7cZHy7YQJubxJ0FHN6WUr4Y0ZfxqGOqeIEoFKLrCsdzODQQgiq00nHJIh0Us'
+STRIPE_SECRET_KEY = ''
+STRIPE_PUBLISHABLE_KEY = ''
 
 #Razorpayment 
 
