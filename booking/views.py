@@ -1,7 +1,7 @@
 import traceback
 import datetime
 import stripe
-import razorpay
+
 
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
