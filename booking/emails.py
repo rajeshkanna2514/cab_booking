@@ -11,12 +11,12 @@ def generate_otp(length=6):
     otp = ''.join(random.choice(otp_chars) for _ in range(length))
     return otp
 
-def format_phone_number(phone_number, country_code="+91"):
-    # Check if phone number already has a country code
-    if not phone_number.startswith("+"):
-        # Prepend the provided country code
-        phone_number = country_code + phone_number
-    return phone_number
+# def format_phone_number(phone_number, country_code="+91"):
+#     # Check if phone number already has a country code
+#     if not phone_number.startswith("+"):
+#         # Prepend the provided country code
+#         phone_number = country_code + phone_number
+#     return phone_number
 
 def send_otp_mail(email, otp):
     send_mail(
