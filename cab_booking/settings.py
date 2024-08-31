@@ -14,6 +14,7 @@ from datetime import timedelta
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -68,6 +69,7 @@ AUTH_USER_MODEL = 'booking.User'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  
 ]
+
 
 TEMPLATES = [
     {
@@ -194,3 +196,11 @@ STRIPE_PUBLISHABLE_KEY = ''
 
 # RAZORPAY_API_KEY = 'your_razorpay_api_key'
 # RAZORPAY_API_SECRET = 'your_razorpay_api_secret'
+
+#CELERY
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER ='json'
