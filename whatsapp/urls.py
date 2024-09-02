@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import get_activities
+from .views import ActivitiesView
 
 urlpatterns = [
-    path('webhook/',get_activities,name='webhook')
+    path('get-activities/',ActivitiesView.as_view(),name='activities')
 ]
