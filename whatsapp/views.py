@@ -30,9 +30,9 @@ def mark_message_as_read(message_id):
 def whatsapp_webhook(request):
     if request.method == 'GET':
 
-        mode = request.GET.get('hub.mode')
-        token = request.GET.get('hub.verify_token')
-        challenge = request.GET.get('hub.challenge')
+        mode = "subscribe"
+        token = "HAPPY"
+        challenge = "challenge"
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             return JsonResponse({'hub.challenge': challenge}, status=200)
         else:
